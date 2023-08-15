@@ -17,6 +17,7 @@ export default class App extends React.Component {
   componentDidMount() {
     axios.get(URL)
       .then(res => {
+        console.log(res)
         this.setState({ todos: res.data.data });
       })
       .catch(e => {
@@ -44,20 +45,19 @@ export default class App extends React.Component {
   }
 
   handleToggle = (id) => {
-    axios.patch(`${URL}/${id}`)
-      .then(res => {
-        const updatedTodo = res.data.data;
-        const updatedTodos = this.state.todos.map(todo => {
-          if (todo.id === updatedTodo.id) {
-            return updatedTodo;
-          }
-          return todo;
-        });
-        this.setState({ todos: updatedTodos });
-      })
-      .catch(e => {
-        console.log('Well, you broke it');
-      });
+    const updatedTodos = this.state.todos.map(todo => {
+      if (todo.id === id) {
+        // Toggle the 'completed' property
+        return {
+          ...todo,
+          completed: !todo.completed
+        };
+      }
+      return todo;
+    });
+
+    // Update the state with the new array of todos
+    this.setState({ todos: updatedTodos });
   }
 
   handleClearCompleted = () => {
